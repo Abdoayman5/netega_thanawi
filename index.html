@@ -211,6 +211,44 @@
   }
   .newsearch:hover{background:var(--paper-2);}
 
+  .college-box{
+    margin-top:22px;padding-top:18px;border-top:2px dashed var(--paper-edge);
+  }
+  .college-title{
+    font-size:15px;font-weight:800;color:var(--ink);display:flex;align-items:center;gap:8px;
+  }
+  .beta-tag{
+    font-size:10.5px;font-weight:700;background:var(--paper-2);color:var(--brass-dark);
+    padding:2px 8px;border-radius:10px;border:1px solid var(--paper-edge);
+  }
+  .college-note{
+    font-size:12.5px;color:var(--ink-soft);line-height:1.8;margin:6px 0 14px;
+  }
+  .branch-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+  .branch-btn{
+    flex:1;min-width:100px;background:#fffdf6;border:1.5px solid var(--paper-edge);
+    color:var(--ink);padding:9px 10px;border-radius:4px;font-family:'Cairo',sans-serif;
+    font-weight:700;font-size:13.5px;cursor:pointer;transition:.15s;
+  }
+  .branch-btn:hover{background:var(--paper-2);}
+  .branch-btn.active{background:var(--bg-deep);color:var(--brass-light);border-color:var(--bg-deep);}
+
+  .college-list{display:none;}
+  .college-list.show{display:block;}
+  .college-summary{
+    font-size:13px;color:var(--ink);background:var(--paper-2);border-radius:4px;
+    padding:9px 12px;margin-bottom:10px;font-weight:600;
+  }
+  .college-row{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:9px 4px;border-bottom:1px solid var(--paper-edge);font-size:13.5px;
+  }
+  .college-row:last-child{border-bottom:none;}
+  .college-row .cname{color:var(--ink);}
+  .college-row .ccut{color:var(--ink-soft);font-size:12px;white-space:nowrap;}
+  .college-row.miss .cname{color:var(--ink-soft);}
+  .no-match{font-size:13px;color:var(--ink-soft);padding:8px 4px;}
+
   .seal{
     position:absolute;
     left:-6px; top:-6px;
@@ -299,6 +337,18 @@
       </div>
       <div class="pct-bar-bg"><div class="pct-bar-fill" id="pctFill"></div></div>
       <div class="pct-label" id="pctLabel"></div>
+
+      <div class="college-box" id="collegeBox">
+        <div class="college-title">تقدير الكليات المتاحة <span class="beta-tag">استرشادي</span></div>
+        <div class="college-note">مبني على الحدود الدنيا الفعلية لتنسيق العام الماضي (2025) &mdash; وليس أرقام 2026 الرسمية، والتي تُعلن لاحقًا وتختلف كل عام. اختر شعبتك لعرض التقدير:</div>
+        <div class="branch-row" id="branchRow">
+          <button class="branch-btn" data-branch="علوم">علمي علوم</button>
+          <button class="branch-btn" data-branch="رياضة">علمي رياضة</button>
+          <button class="branch-btn" data-branch="أدبي">أدبي</button>
+        </div>
+        <div class="college-list" id="collegeList"></div>
+      </div>
+
       <button class="newsearch" id="newSearch">بحث جديد</button>
     </div>
   </div>
@@ -457,6 +507,12 @@ function showResult(idx){
   const pct = Math.max(0, Math.min(100, (parseFloat(degs[idx])/320*100)));
   document.getElementById('pctFill').style.width = pct.toFixed(1)+'%';
   document.getElementById('pctLabel').textContent = pct.toFixed(1)+'% من مجموع الدرجات';
+
+  currentScore = parseFloat(degs[idx]);
+  [...branchRowEl.children].forEach(b=>b.classList.remove('active'));
+  collegeListEl.classList.remove('show');
+  collegeListEl.innerHTML = '';
+
   sealEl.classList.remove('stamp');
   void sealEl.offsetWidth;
   sealEl.classList.add('stamp');
@@ -508,6 +564,105 @@ function doSearch(){
     const idxs = searchByName(raw);
     renderSuggestions(idxs.slice(0,50), idxs.length>50);
   }
+}
+
+// Reference cutoffs: actual Phase-1 (المرحلة الأولى) 2025 coordination results, out of 320.
+// Source: Egyptian press coverage of the official coordination office announcements (2025).
+// These are last year's real numbers, used only as a rough guide for 2026 -- NOT official 2026 figures.
+const COLLEGE_CUTOFFS = {
+  'علوم':[
+    {name:'طب بشري - جامعة القاهرة', cutoff:303.5},
+    {name:'طب بشري - جامعة المنصورة', cutoff:303.5},
+    {name:'طب بشري - جامعة الزقازيق', cutoff:303},
+    {name:'طب بشري - جامعة الإسكندرية', cutoff:302.5},
+    {name:'طب بشري - جامعة عين شمس', cutoff:301},
+    {name:'طب بيطري - جامعة السادات', cutoff:279},
+    {name:'تمريض - جامعة قناة السويس', cutoff:279},
+    {name:'الحد الأدنى العام لبدء تنسيق علمي علوم (نظام حديث)', cutoff:293},
+  ],
+  'رياضة':[
+    {name:'هندسة بترول وتعدين - جامعة السويس', cutoff:305},
+    {name:'هندسة (متوسط عام)', cutoff:286},
+    {name:'تخطيط عمراني', cutoff:284},
+    {name:'حاسبات ومعلومات - قناة السويس بالإسماعيلية', cutoff:279.5},
+    {name:'حاسبات ومعلومات - سوهاج', cutoff:278.5},
+    {name:'حاسبات ومعلومات - كفر الشيخ', cutoff:278.5},
+    {name:'حاسبات وذكاء اصطناعي - بنها', cutoff:278},
+    {name:'حاسبات ومعلومات - السويس', cutoff:277},
+    {name:'حاسبات وذكاء اصطناعي - حلوان', cutoff:276.5},
+    {name:'حاسبات ومعلومات - المنوفية (شبين الكوم)', cutoff:276},
+    {name:'حاسبات وذكاء اصطناعي - الغردقة', cutoff:274.5},
+    {name:'حاسبات وذكاء اصطناعي - السادات', cutoff:274.5},
+    {name:'حاسبات ومعلومات - العريش', cutoff:273},
+    {name:'حاسبات ومعلومات - الفيوم', cutoff:272.5},
+    {name:'حاسبات وذكاء اصطناعي - مطروح', cutoff:272},
+    {name:'حاسبات ومعلومات - بني سويف', cutoff:271},
+    {name:'حاسبات ومعلومات - قنا', cutoff:270.5},
+    {name:'حاسبات ومعلومات - المنيا', cutoff:270.5},
+    {name:'حاسبات ومعلومات - أسيوط', cutoff:270},
+    {name:'حاسبات ومعلومات - الأقصر', cutoff:269.5},
+  ],
+  'أدبي':[
+    {name:'الألسن - جامعة كفر الشيخ', cutoff:286},
+    {name:'الاقتصاد والعلوم السياسية - جامعة القاهرة', cutoff:284.5},
+    {name:'الاقتصاد والعلوم السياسية - جامعة الإسكندرية', cutoff:279.8},
+    {name:'الألسن - جامعة عين شمس', cutoff:279.8},
+    {name:'الإعلام - جامعة القاهرة', cutoff:277},
+    {name:'الألسن - جامعة قناة السويس', cutoff:277.5},
+    {name:'السياسة والاقتصاد - جامعة السويس', cutoff:275.5},
+    {name:'الألسن - جامعة بني سويف', cutoff:273.5},
+    {name:'الإعلام - جامعة عين شمس', cutoff:272.4},
+    {name:'الألسن - جامعة المنيا', cutoff:272},
+    {name:'الحقوق - جامعة بورسعيد', cutoff:262.2},
+    {name:'الإعلام - جامعة المنوفية', cutoff:269.6},
+    {name:'الآثار - جامعة القاهرة', cutoff:260.7},
+    {name:'الآثار - جامعة الفيوم', cutoff:257.6},
+    {name:'الإعلام - جامعة بني سويف', cutoff:267.7},
+    {name:'الحقوق - جامعة سوهاج', cutoff:255.6},
+    {name:'الإعلام - جامعة جنوب الوادي', cutoff:266.1},
+    {name:'الآداب - جامعة القاهرة', cutoff:247.8},
+    {name:'التربية - جامعة الزقازيق', cutoff:249.8},
+    {name:'التربية - جامعة طنطا', cutoff:244.7},
+    {name:'الحد الأدنى العام لبدء تنسيق أدبي (نظام حديث)', cutoff:233},
+  ]
+};
+
+let currentScore = null;
+const collegeListEl = document.getElementById('collegeList');
+const branchRowEl = document.getElementById('branchRow');
+
+branchRowEl.addEventListener('click', (e)=>{
+  const btn = e.target.closest('.branch-btn');
+  if(!btn) return;
+  [...branchRowEl.children].forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderCollegeEstimate(btn.dataset.branch);
+});
+
+function renderCollegeEstimate(branch){
+  const list = COLLEGE_CUTOFFS[branch] || [];
+  const sorted = [...list].sort((a,b)=>b.cutoff-a.cutoff);
+  const qualifying = sorted.filter(c=>currentScore >= c.cutoff);
+  const missed = sorted.filter(c=>currentScore < c.cutoff).slice(-3).reverse();
+
+  let html = '';
+  html += `<div class="college-summary">مجموعك ${currentScore} من 320 &mdash; هذه مقارنة استرشادية بحدود تنسيق العام الماضي فقط.</div>`;
+
+  if(qualifying.length){
+    qualifying.forEach(c=>{
+      html += `<div class="college-row"><span class="cname">${c.name}</span><span class="ccut">حد العام الماضي: ${c.cutoff}</span></div>`;
+    });
+  }else{
+    html += `<div class="no-match">لا توجد كليات في هذه القائمة المختصرة كان حدها الأدنى العام الماضي عند هذا المجموع أو أقل.</div>`;
+  }
+  if(missed.length){
+    html += `<div class="college-summary" style="margin-top:12px;">قريب من (لم يتحقق العام الماضي):</div>`;
+    missed.forEach(c=>{
+      html += `<div class="college-row miss"><span class="cname">${c.name}</span><span class="ccut">حد العام الماضي: ${c.cutoff}</span></div>`;
+    });
+  }
+  collegeListEl.innerHTML = html;
+  collegeListEl.classList.add('show');
 }
 
 let debounceTimer;
