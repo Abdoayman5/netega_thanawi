@@ -340,7 +340,7 @@
 
       <div class="college-box" id="collegeBox">
         <div class="college-title">تقدير الكليات المتاحة <span class="beta-tag">استرشادي</span></div>
-        <div class="college-note">مبني على الحدود الدنيا الفعلية لتنسيق العام الماضي (2025) &mdash; وليس أرقام 2026 الرسمية، والتي تُعلن لاحقًا وتختلف كل عام. اختر شعبتك لعرض التقدير:</div>
+        <div class="college-note">مبني على الحدود الدنيا الفعلية لتنسيق العام الماضي (2025) &mdash; المراحل الثلاث (الأولى، الثانية، الثالثة) &mdash; وليس أرقام 2026 الرسمية، والتي تُعلن لاحقًا وتختلف كل عام. اختر شعبتك لعرض التقدير:</div>
         <div class="branch-row" id="branchRow">
           <button class="branch-btn" data-branch="علوم">علمي علوم</button>
           <button class="branch-btn" data-branch="رياضة">علمي رياضة</button>
@@ -571,59 +571,65 @@ function doSearch(){
 // These are last year's real numbers, used only as a rough guide for 2026 -- NOT official 2026 figures.
 const COLLEGE_CUTOFFS = {
   'علوم':[
-    {name:'طب بشري - جامعة القاهرة', cutoff:303.5},
-    {name:'طب بشري - جامعة المنصورة', cutoff:303.5},
-    {name:'طب بشري - جامعة الزقازيق', cutoff:303},
-    {name:'طب بشري - جامعة الإسكندرية', cutoff:302.5},
-    {name:'طب بشري - جامعة عين شمس', cutoff:301},
-    {name:'طب بيطري - جامعة السادات', cutoff:279},
-    {name:'تمريض - جامعة قناة السويس', cutoff:279},
-    {name:'الحد الأدنى العام لبدء تنسيق علمي علوم (نظام حديث)', cutoff:293},
+    {name:'طب بشري - جامعة القاهرة', cutoff:303.5, phase:1},
+    {name:'طب بشري - جامعة المنصورة', cutoff:303.5, phase:1},
+    {name:'طب بشري - جامعة الزقازيق', cutoff:303, phase:1},
+    {name:'طب بشري - جامعة الإسكندرية', cutoff:302.5, phase:1},
+    {name:'طب بشري - جامعة عين شمس', cutoff:301, phase:1},
+    {name:'طب بيطري - جامعة السادات', cutoff:279, phase:1},
+    {name:'تمريض - جامعة قناة السويس', cutoff:279, phase:1},
+    {name:'الحد الأدنى العام لبدء تنسيق علمي علوم (نظام حديث) - المرحلة الأولى', cutoff:293, phase:1},
+    {name:'الحد الأدنى العام للمرحلة الثانية (علمي)', cutoff:220, phase:2},
+    {name:'الحد الأدنى العام للمرحلة الثالثة (جميع الشعب تقريبًا)', cutoff:160, phase:3},
   ],
   'رياضة':[
-    {name:'هندسة بترول وتعدين - جامعة السويس', cutoff:305},
-    {name:'هندسة (متوسط عام)', cutoff:286},
-    {name:'تخطيط عمراني', cutoff:284},
-    {name:'حاسبات ومعلومات - قناة السويس بالإسماعيلية', cutoff:279.5},
-    {name:'حاسبات ومعلومات - سوهاج', cutoff:278.5},
-    {name:'حاسبات ومعلومات - كفر الشيخ', cutoff:278.5},
-    {name:'حاسبات وذكاء اصطناعي - بنها', cutoff:278},
-    {name:'حاسبات ومعلومات - السويس', cutoff:277},
-    {name:'حاسبات وذكاء اصطناعي - حلوان', cutoff:276.5},
-    {name:'حاسبات ومعلومات - المنوفية (شبين الكوم)', cutoff:276},
-    {name:'حاسبات وذكاء اصطناعي - الغردقة', cutoff:274.5},
-    {name:'حاسبات وذكاء اصطناعي - السادات', cutoff:274.5},
-    {name:'حاسبات ومعلومات - العريش', cutoff:273},
-    {name:'حاسبات ومعلومات - الفيوم', cutoff:272.5},
-    {name:'حاسبات وذكاء اصطناعي - مطروح', cutoff:272},
-    {name:'حاسبات ومعلومات - بني سويف', cutoff:271},
-    {name:'حاسبات ومعلومات - قنا', cutoff:270.5},
-    {name:'حاسبات ومعلومات - المنيا', cutoff:270.5},
-    {name:'حاسبات ومعلومات - أسيوط', cutoff:270},
-    {name:'حاسبات ومعلومات - الأقصر', cutoff:269.5},
+    {name:'هندسة بترول وتعدين - جامعة السويس', cutoff:305, phase:1},
+    {name:'هندسة (متوسط عام)', cutoff:286, phase:1},
+    {name:'تخطيط عمراني', cutoff:284, phase:1},
+    {name:'حاسبات ومعلومات - قناة السويس بالإسماعيلية', cutoff:279.5, phase:1},
+    {name:'حاسبات ومعلومات - سوهاج', cutoff:278.5, phase:1},
+    {name:'حاسبات ومعلومات - كفر الشيخ', cutoff:278.5, phase:1},
+    {name:'حاسبات وذكاء اصطناعي - بنها', cutoff:278, phase:1},
+    {name:'حاسبات ومعلومات - السويس', cutoff:277, phase:1},
+    {name:'حاسبات وذكاء اصطناعي - حلوان', cutoff:276.5, phase:1},
+    {name:'حاسبات ومعلومات - المنوفية (شبين الكوم)', cutoff:276, phase:1},
+    {name:'حاسبات وذكاء اصطناعي - الغردقة', cutoff:274.5, phase:1},
+    {name:'حاسبات وذكاء اصطناعي - السادات', cutoff:274.5, phase:1},
+    {name:'حاسبات ومعلومات - العريش', cutoff:273, phase:1},
+    {name:'حاسبات ومعلومات - الفيوم', cutoff:272.5, phase:1},
+    {name:'حاسبات وذكاء اصطناعي - مطروح', cutoff:272, phase:1},
+    {name:'حاسبات ومعلومات - بني سويف', cutoff:271, phase:1},
+    {name:'حاسبات ومعلومات - قنا', cutoff:270.5, phase:1},
+    {name:'حاسبات ومعلومات - المنيا', cutoff:270.5, phase:1},
+    {name:'حاسبات ومعلومات - أسيوط', cutoff:270, phase:1},
+    {name:'حاسبات ومعلومات - الأقصر', cutoff:269.5, phase:1},
+    {name:'الحد الأدنى العام للمرحلة الثانية (علمي)', cutoff:220, phase:2},
+    {name:'الحد الأدنى العام للمرحلة الثالثة (جميع الشعب تقريبًا)', cutoff:160, phase:3},
   ],
   'أدبي':[
-    {name:'الألسن - جامعة كفر الشيخ', cutoff:286},
-    {name:'الاقتصاد والعلوم السياسية - جامعة القاهرة', cutoff:284.5},
-    {name:'الاقتصاد والعلوم السياسية - جامعة الإسكندرية', cutoff:279.8},
-    {name:'الألسن - جامعة عين شمس', cutoff:279.8},
-    {name:'الإعلام - جامعة القاهرة', cutoff:277},
-    {name:'الألسن - جامعة قناة السويس', cutoff:277.5},
-    {name:'السياسة والاقتصاد - جامعة السويس', cutoff:275.5},
-    {name:'الألسن - جامعة بني سويف', cutoff:273.5},
-    {name:'الإعلام - جامعة عين شمس', cutoff:272.4},
-    {name:'الألسن - جامعة المنيا', cutoff:272},
-    {name:'الحقوق - جامعة بورسعيد', cutoff:262.2},
-    {name:'الإعلام - جامعة المنوفية', cutoff:269.6},
-    {name:'الآثار - جامعة القاهرة', cutoff:260.7},
-    {name:'الآثار - جامعة الفيوم', cutoff:257.6},
-    {name:'الإعلام - جامعة بني سويف', cutoff:267.7},
-    {name:'الحقوق - جامعة سوهاج', cutoff:255.6},
-    {name:'الإعلام - جامعة جنوب الوادي', cutoff:266.1},
-    {name:'الآداب - جامعة القاهرة', cutoff:247.8},
-    {name:'التربية - جامعة الزقازيق', cutoff:249.8},
-    {name:'التربية - جامعة طنطا', cutoff:244.7},
-    {name:'الحد الأدنى العام لبدء تنسيق أدبي (نظام حديث)', cutoff:233},
+    {name:'الألسن - جامعة كفر الشيخ', cutoff:286, phase:1},
+    {name:'الاقتصاد والعلوم السياسية - جامعة القاهرة', cutoff:284.5, phase:1},
+    {name:'الاقتصاد والعلوم السياسية - جامعة الإسكندرية', cutoff:279.8, phase:1},
+    {name:'الألسن - جامعة عين شمس', cutoff:279.8, phase:1},
+    {name:'الإعلام - جامعة القاهرة', cutoff:277, phase:1},
+    {name:'الألسن - جامعة قناة السويس', cutoff:277.5, phase:1},
+    {name:'السياسة والاقتصاد - جامعة السويس', cutoff:275.5, phase:1},
+    {name:'الألسن - جامعة بني سويف', cutoff:273.5, phase:1},
+    {name:'الإعلام - جامعة عين شمس', cutoff:272.4, phase:1},
+    {name:'الألسن - جامعة المنيا', cutoff:272, phase:1},
+    {name:'الحقوق - جامعة بورسعيد', cutoff:262.2, phase:1},
+    {name:'الإعلام - جامعة المنوفية', cutoff:269.6, phase:1},
+    {name:'الآثار - جامعة القاهرة', cutoff:260.7, phase:1},
+    {name:'الآثار - جامعة الفيوم', cutoff:257.6, phase:1},
+    {name:'الإعلام - جامعة بني سويف', cutoff:267.7, phase:1},
+    {name:'الحقوق - جامعة سوهاج', cutoff:255.6, phase:1},
+    {name:'الإعلام - جامعة جنوب الوادي', cutoff:266.1, phase:1},
+    {name:'الآداب - جامعة القاهرة', cutoff:247.8, phase:1},
+    {name:'التربية - جامعة الزقازيق', cutoff:249.8, phase:1},
+    {name:'التربية - جامعة طنطا', cutoff:244.7, phase:1},
+    {name:'الحد الأدنى العام لبدء تنسيق أدبي (نظام حديث) - المرحلة الأولى', cutoff:233, phase:1},
+    {name:'الحد الأدنى العام للمرحلة الثانية (أدبي) - تجارة/تربية/آداب/زراعة وغيرها', cutoff:205, phase:2},
+    {name:'الحد الأدنى العام للمرحلة الثالثة (جميع الشعب تقريبًا) - أكثر من 200 كلية ومعهد', cutoff:160, phase:3},
   ]
 };
 
@@ -648,9 +654,11 @@ function renderCollegeEstimate(branch){
   let html = '';
   html += `<div class="college-summary">مجموعك ${currentScore} من 320 &mdash; هذه مقارنة استرشادية بحدود تنسيق العام الماضي فقط.</div>`;
 
+  const PHASE_LABEL = {1:'المرحلة الأولى', 2:'المرحلة الثانية', 3:'المرحلة الثالثة'};
+
   if(qualifying.length){
     qualifying.forEach(c=>{
-      html += `<div class="college-row"><span class="cname">${c.name}</span><span class="ccut">حد العام الماضي: ${c.cutoff}</span></div>`;
+      html += `<div class="college-row"><span class="cname">${c.name}</span><span class="ccut">${PHASE_LABEL[c.phase]||''} &middot; حد العام الماضي: ${c.cutoff}</span></div>`;
     });
   }else{
     html += `<div class="no-match">لا توجد كليات في هذه القائمة المختصرة كان حدها الأدنى العام الماضي عند هذا المجموع أو أقل.</div>`;
@@ -658,7 +666,7 @@ function renderCollegeEstimate(branch){
   if(missed.length){
     html += `<div class="college-summary" style="margin-top:12px;">قريب من (لم يتحقق العام الماضي):</div>`;
     missed.forEach(c=>{
-      html += `<div class="college-row miss"><span class="cname">${c.name}</span><span class="ccut">حد العام الماضي: ${c.cutoff}</span></div>`;
+      html += `<div class="college-row miss"><span class="cname">${c.name}</span><span class="ccut">${PHASE_LABEL[c.phase]||''} &middot; حد العام الماضي: ${c.cutoff}</span></div>`;
     });
   }
   collegeListEl.innerHTML = html;
