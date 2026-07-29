@@ -663,7 +663,6 @@ function renderCollegeEstimate(branch){
   const list = COLLEGE_CUTOFFS[branch] || [];
   const sorted = [...list].sort((a,b)=>b.cutoff-a.cutoff);
   const qualifying = sorted.filter(c=>currentScore >= c.cutoff);
-  const missed = sorted.filter(c=>currentScore < c.cutoff).slice(-3).reverse();
 
   let html = '';
   html += `<div class="college-summary">مجموعك ${currentScore} من 320 &mdash; هذه مقارنة استرشادية بحدود تنسيق العام الماضي فقط.</div>`;
@@ -676,12 +675,6 @@ function renderCollegeEstimate(branch){
     });
   }else{
     html += `<div class="no-match">لا توجد كليات في هذه القائمة المختصرة كان حدها الأدنى العام الماضي عند هذا المجموع أو أقل.</div>`;
-  }
-  if(missed.length){
-    html += `<div class="college-summary" style="margin-top:12px;">قريب من (لم يتحقق العام الماضي):</div>`;
-    missed.forEach(c=>{
-      html += `<div class="college-row miss"><span class="cname">${c.name}</span><span class="ccut">${PHASE_LABEL[c.phase]||''} &middot; حد العام الماضي: ${c.cutoff}</span></div>`;
-    });
   }
   collegeListEl.innerHTML = html;
   collegeListEl.classList.add('show');
