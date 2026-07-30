@@ -698,13 +698,14 @@ function renderCollegeEstimate(branch){
   const qualifying = sorted.filter(c=>currentScore >= c.cutoff).slice(0,4);
 
   let html = '';
-  html += `<div class="college-summary">مجموعك ${currentScore} من 320 &mdash; أقرب 4 كليات بحد أدنى يساوي مجموعك أو أقل منه (تنسيق العام الماضي):</div>`;
+  html += `<div class="college-summary">مجموعك ${currentScore} من 320 &mdash; بناءً على حدود تنسيق العام الماضي (2025)، هذه أقرب الاحتمالات:</div>`;
 
   const PHASE_LABEL = {1:'المرحلة الأولى', 2:'المرحلة الثانية', 3:'المرحلة الثالثة'};
+  const TIER_LABEL = ['الاحتمال الأول (الأقوى)', 'الاحتمال الثاني', 'الاحتمال الثالث', 'احتمال إضافي'];
 
   if(qualifying.length){
-    qualifying.forEach(c=>{
-      html += `<div class="college-row"><span class="cname">${c.name}</span><span class="ccut">${PHASE_LABEL[c.phase]||''} &middot; حد العام الماضي: ${c.cutoff}</span></div>`;
+    qualifying.forEach((c,i)=>{
+      html += `<div class="college-row"><span class="cname"><b>${TIER_LABEL[i]||('احتمال '+(i+1))}:</b> ${c.name}</span><span class="ccut">${PHASE_LABEL[c.phase]||''} &middot; حد العام الماضي: ${c.cutoff}</span></div>`;
     });
   }else{
     html += `<div class="no-match">لا توجد كليات في هذه القائمة المختصرة كان حدها الأدنى العام الماضي عند هذا المجموع أو أقل.</div>`;
