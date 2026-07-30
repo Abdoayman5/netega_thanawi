@@ -248,6 +248,11 @@
   .college-row .ccut{color:var(--ink-soft);font-size:12px;white-space:nowrap;}
   .college-row.miss .cname{color:var(--ink-soft);}
   .no-match{font-size:13px;color:var(--ink-soft);padding:8px 4px;}
+  .conf-dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-left:6px;vertical-align:middle;}
+  .dot-strong{background:#1f8a4c;}
+  .dot-medium{background:#c99a2e;}
+  .dot-weak{background:#b8483a;}
+  .tier-tag{display:block;font-size:11.5px;color:var(--ink-soft);margin-top:2px;}
 
   .seal{
     position:absolute;
@@ -340,7 +345,7 @@
 
       <div class="college-box" id="collegeBox">
         <div class="college-title">تقدير الكليات المتاحة <span class="beta-tag">استرشادي</span></div>
-        <div class="college-note">مبني على الحدود الدنيا الفعلية لتنسيق العام الماضي (2025) &mdash; المراحل الثلاث (الأولى، الثانية، الثالثة) &mdash; وليس أرقام 2026 الرسمية، والتي تُعلن لاحقًا وتختلف كل عام. بعض بنود المرحلة الثانية (المُعلَّمة "تقديري") مبنية على نطاقات عامة منشورة وليست رقمًا دقيقًا لكل جامعة. الكليات المُعلَّمة "يتطلب اجتياز اختبار القدرات" (كالفنون الجميلة/التطبيقية) تشترط اجتياز اختبار قدرات منفصل بجانب المجموع &mdash; المجموع وحده لا يكفي فيها. اختر شعبتك لعرض التقدير:</div>
+        <div class="college-note">مبني على الحدود الدنيا الفعلية لتنسيق العام الماضي (2025) &mdash; المراحل الثلاث (الأولى، الثانية، الثالثة) &mdash; وليس أرقام 2026 الرسمية، والتي تُعلن لاحقًا وتختلف كل عام. "نسبة الثقة" بجانب كل كلية تقديرية فقط (مبنية على قرب مجموعك من الحد الأدنى)، وليست حسابًا إحصائيًا دقيقًا لأننا لا نملك توزيع درجات هذا العام. بعض بنود المرحلة الثانية (المُعلَّمة "تقديري") مبنية على نطاقات عامة منشورة. الكليات المُعلَّمة "يتطلب اجتياز اختبار القدرات" تشترط اجتياز اختبار قدرات منفصل بجانب المجموع &mdash; المجموع وحده لا يكفي فيها. اختر شعبتك لعرض التقدير:</div>
         <div class="branch-row" id="branchRow">
           <button class="branch-btn" data-branch="علوم">علمي علوم</button>
           <button class="branch-btn" data-branch="رياضة">علمي رياضة</button>
@@ -569,116 +574,16 @@ function doSearch(){
 // Reference cutoffs: actual Phase-1 (المرحلة الأولى) 2025 coordination results, out of 320.
 // Source: Egyptian press coverage of the official coordination office announcements (2025).
 // These are last year's real numbers, used only as a rough guide for 2026 -- NOT official 2026 figures.
-const COLLEGE_CUTOFFS = {
-  'علوم':[
-    {name:'طب بشري - جامعة القاهرة', cutoff:303.5, phase:1},
-    {name:'طب بشري - جامعة المنصورة', cutoff:303.5, phase:1},
-    {name:'طب بشري - جامعة الزقازيق', cutoff:303, phase:1},
-    {name:'طب بشري - جامعة الإسكندرية', cutoff:302.5, phase:1},
-    {name:'طب بشري - جامعة عين شمس', cutoff:301, phase:1},
-    {name:'طب بيطري - جامعة السادات', cutoff:279, phase:1},
-    {name:'تمريض - جامعة قناة السويس', cutoff:279, phase:1},
-    {name:'الحد الأدنى العام لبدء تنسيق علمي علوم (نظام حديث) - المرحلة الأولى', cutoff:293, phase:1},
-    {name:'كليات العلوم (متوسط الجامعات) - المرحلة الثانية', cutoff:285, phase:2},
-    {name:'بعض كليات التربية - المرحلة الثانية', cutoff:272, phase:2},
-    {name:'كليات التمريض - المرحلة الثانية', cutoff:266, phase:2},
-    {name:'كليات الزراعة - المرحلة الثانية', cutoff:240, phase:2},
-    {name:'كلية الفنون التطبيقية - حلوان (يتطلب اجتياز اختبار القدرات)', cutoff:298, phase:2},
-    {name:'كلية الفنون التطبيقية - طنطا (يتطلب اجتياز اختبار القدرات)', cutoff:293, phase:2},
-    {name:'كلية الفنون التطبيقية - بني سويف (يتطلب اجتياز اختبار القدرات)', cutoff:290, phase:2},
-    {name:'كلية الفنون الجميلة - حلوان قسم عمارة (يتطلب اجتياز اختبار القدرات)', cutoff:267, phase:1},
-    {name:'الحد الأدنى العام للمرحلة الثانية (علمي)', cutoff:220, phase:2},
-    {name:'المعهد العالي للدراسات النوعية واللغات - الجيزة - المرحلة الثالثة', cutoff:176, phase:3},
-    {name:'معهد عالي تعاون زراعي (نظم معلومات زراعية) - شبرا الخيمة - المرحلة الثالثة', cutoff:176, phase:3},
-    {name:'المعهد الفني التجاري - طنطا - المرحلة الثالثة', cutoff:176, phase:3},
-    {name:'كلية تربية نوعية (موسيقية) - المنيا - المرحلة الثالثة', cutoff:176, phase:3},
-    {name:'كلية التربية الرياضية بنين - الإسكندرية (يتطلب اختبار لياقة/قدرات) - المرحلة الثالثة', cutoff:176, phase:3},
-    {name:'كلية التربية الرياضية بنين - أسيوط (يتطلب اختبار لياقة/قدرات) - المرحلة الثالثة', cutoff:160, phase:3},
-    {name:'كلية التربية الرياضية بنات - كفر الشيخ (يتطلب اختبار لياقة/قدرات) - المرحلة الثالثة', cutoff:160, phase:3},
-    {name:'كلية التربية الرياضية بنات - جنوب الوادي (يتطلب اختبار لياقة/قدرات) - المرحلة الثالثة', cutoff:160, phase:3},
-    {name:'كلية التربية الفنية - حلوان (يتطلب اختبار قدرات) - المرحلة الثالثة', cutoff:160, phase:3},
-  ],
-  'رياضة':[
-    {name:'هندسة بترول وتعدين - جامعة السويس', cutoff:305, phase:1},
-    {name:'هندسة (متوسط عام)', cutoff:286, phase:1},
-    {name:'تخطيط عمراني', cutoff:284, phase:1},
-    {name:'حاسبات ومعلومات - قناة السويس بالإسماعيلية', cutoff:279.5, phase:1},
-    {name:'حاسبات ومعلومات - سوهاج', cutoff:278.5, phase:1},
-    {name:'حاسبات ومعلومات - كفر الشيخ', cutoff:278.5, phase:1},
-    {name:'حاسبات وذكاء اصطناعي - بنها', cutoff:278, phase:1},
-    {name:'حاسبات ومعلومات - السويس', cutoff:277, phase:1},
-    {name:'حاسبات وذكاء اصطناعي - حلوان', cutoff:276.5, phase:1},
-    {name:'حاسبات ومعلومات - المنوفية (شبين الكوم)', cutoff:276, phase:1},
-    {name:'حاسبات وذكاء اصطناعي - الغردقة', cutoff:274.5, phase:1},
-    {name:'حاسبات وذكاء اصطناعي - السادات', cutoff:274.5, phase:1},
-    {name:'حاسبات ومعلومات - العريش', cutoff:273, phase:1},
-    {name:'حاسبات ومعلومات - الفيوم', cutoff:272.5, phase:1},
-    {name:'حاسبات وذكاء اصطناعي - مطروح', cutoff:272, phase:1},
-    {name:'حاسبات ومعلومات - بني سويف', cutoff:271, phase:1},
-    {name:'حاسبات ومعلومات - قنا', cutoff:270.5, phase:1},
-    {name:'حاسبات ومعلومات - المنيا', cutoff:270.5, phase:1},
-    {name:'حاسبات ومعلومات - أسيوط', cutoff:270, phase:1},
-    {name:'حاسبات ومعلومات - الأقصر', cutoff:269.5, phase:1},
-    {name:'كليات العلوم (متوسط الجامعات) - المرحلة الثانية', cutoff:285, phase:2},
-    {name:'بعض كليات التربية - المرحلة الثانية', cutoff:272, phase:2},
-    {name:'كليات التمريض - المرحلة الثانية', cutoff:266, phase:2},
-    {name:'كليات الزراعة - المرحلة الثانية', cutoff:240, phase:2},
-    {name:'كلية الفنون التطبيقية - حلوان (يتطلب اجتياز اختبار القدرات)', cutoff:298, phase:2},
-    {name:'كلية الفنون التطبيقية - طنطا (يتطلب اجتياز اختبار القدرات)', cutoff:293, phase:2},
-    {name:'كلية الفنون التطبيقية - بني سويف (يتطلب اجتياز اختبار القدرات)', cutoff:290, phase:2},
-    {name:'كلية الفنون الجميلة - حلوان قسم عمارة (يتطلب اجتياز اختبار القدرات)', cutoff:267, phase:1},
-    {name:'الحد الأدنى العام للمرحلة الثانية (علمي)', cutoff:220, phase:2},
-    {name:'المعهد العالي للدراسات النوعية واللغات - الجيزة - المرحلة الثالثة', cutoff:176, phase:3},
-    {name:'معهد عالي تعاون زراعي (نظم معلومات زراعية) - شبرا الخيمة - المرحلة الثالثة', cutoff:176, phase:3},
-    {name:'المعهد الفني التجاري - طنطا - المرحلة الثالثة', cutoff:176, phase:3},
-    {name:'كلية تربية نوعية (موسيقية) - المنيا - المرحلة الثالثة', cutoff:176, phase:3},
-    {name:'كلية التربية الرياضية بنين - الإسكندرية (يتطلب اختبار لياقة/قدرات) - المرحلة الثالثة', cutoff:176, phase:3},
-    {name:'كلية التربية الرياضية بنين - أسيوط (يتطلب اختبار لياقة/قدرات) - المرحلة الثالثة', cutoff:160, phase:3},
-    {name:'كلية التربية الرياضية بنات - كفر الشيخ (يتطلب اختبار لياقة/قدرات) - المرحلة الثالثة', cutoff:160, phase:3},
-    {name:'كلية التربية الرياضية بنات - جنوب الوادي (يتطلب اختبار لياقة/قدرات) - المرحلة الثالثة', cutoff:160, phase:3},
-    {name:'كلية التربية الفنية - حلوان (يتطلب اختبار قدرات) - المرحلة الثالثة', cutoff:160, phase:3},
-  ],
-  'أدبي':[
-    {name:'الألسن - جامعة كفر الشيخ', cutoff:286, phase:1},
-    {name:'الاقتصاد والعلوم السياسية - جامعة القاهرة', cutoff:284.5, phase:1},
-    {name:'الاقتصاد والعلوم السياسية - جامعة الإسكندرية', cutoff:279.8, phase:1},
-    {name:'الألسن - جامعة عين شمس', cutoff:279.8, phase:1},
-    {name:'الإعلام - جامعة القاهرة', cutoff:277, phase:1},
-    {name:'الألسن - جامعة قناة السويس', cutoff:277.5, phase:1},
-    {name:'السياسة والاقتصاد - جامعة السويس', cutoff:275.5, phase:1},
-    {name:'الألسن - جامعة بني سويف', cutoff:273.5, phase:1},
-    {name:'الإعلام - جامعة عين شمس', cutoff:272.4, phase:1},
-    {name:'الألسن - جامعة المنيا', cutoff:272, phase:1},
-    {name:'الحقوق - جامعة بورسعيد', cutoff:262.2, phase:1},
-    {name:'الإعلام - جامعة المنوفية', cutoff:269.6, phase:1},
-    {name:'الآثار - جامعة القاهرة', cutoff:260.7, phase:1},
-    {name:'الآثار - جامعة الفيوم', cutoff:257.6, phase:1},
-    {name:'الإعلام - جامعة بني سويف', cutoff:267.7, phase:1},
-    {name:'الحقوق - جامعة سوهاج', cutoff:255.6, phase:1},
-    {name:'الإعلام - جامعة جنوب الوادي', cutoff:266.1, phase:1},
-    {name:'الآداب - جامعة القاهرة', cutoff:247.8, phase:1},
-    {name:'التربية - جامعة الزقازيق', cutoff:249.8, phase:1},
-    {name:'التربية - جامعة طنطا', cutoff:244.7, phase:1},
-    {name:'الحد الأدنى العام لبدء تنسيق أدبي (نظام حديث) - المرحلة الأولى', cutoff:233, phase:1},
-    {name:'كليات التجارة (انتظام) - المرحلة الثانية (تقديري)', cutoff:230, phase:2},
-    {name:'كليات الحقوق (انتظام) - المرحلة الثانية (تقديري)', cutoff:225, phase:2},
-    {name:'كليات الآداب والتربية - المرحلة الثانية (تقديري)', cutoff:215, phase:2},
-    {name:'كلية الفنون التطبيقية - حلوان (يتطلب اجتياز اختبار القدرات)', cutoff:298, phase:2},
-    {name:'كلية الفنون التطبيقية - طنطا (يتطلب اجتياز اختبار القدرات)', cutoff:293, phase:2},
-    {name:'كلية الفنون التطبيقية - بني سويف (يتطلب اجتياز اختبار القدرات)', cutoff:290, phase:2},
-    {name:'كلية الفنون الجميلة - حلوان قسم عمارة (يتطلب اجتياز اختبار القدرات)', cutoff:267, phase:1},
-    {name:'الحد الأدنى العام للمرحلة الثانية (أدبي) - خدمة اجتماعية/سياحة وفنادق وغيرها', cutoff:205, phase:2},
-    {name:'المعهد العالي للدراسات النوعية واللغات - الجيزة - المرحلة الثالثة', cutoff:176, phase:3},
-    {name:'معهد عالي تعاون زراعي (نظم معلومات زراعية) - شبرا الخيمة - المرحلة الثالثة', cutoff:176, phase:3},
-    {name:'المعهد الفني التجاري - طنطا - المرحلة الثالثة', cutoff:176, phase:3},
-    {name:'كلية تربية نوعية (موسيقية) - المنيا - المرحلة الثالثة', cutoff:176, phase:3},
-    {name:'كلية التربية الرياضية بنين - الإسكندرية (يتطلب اختبار لياقة/قدرات) - المرحلة الثالثة', cutoff:176, phase:3},
-    {name:'كلية التربية الرياضية بنين - أسيوط (يتطلب اختبار لياقة/قدرات) - المرحلة الثالثة', cutoff:160, phase:3},
-    {name:'كلية التربية الرياضية بنات - كفر الشيخ (يتطلب اختبار لياقة/قدرات) - المرحلة الثالثة', cutoff:160, phase:3},
-    {name:'كلية التربية الرياضية بنات - جنوب الوادي (يتطلب اختبار لياقة/قدرات) - المرحلة الثالثة', cutoff:160, phase:3},
-    {name:'كلية التربية الفنية - حلوان (يتطلب اختبار قدرات) - المرحلة الثالثة', cutoff:160, phase:3},
-  ]
-};
+// College cutoff data now lives in colleges.json, editable without touching this file.
+let COLLEGE_CUTOFFS = {};
+async function loadColleges(){
+  try{
+    const res = await fetch('colleges.json');
+    COLLEGE_CUTOFFS = await res.json();
+  }catch(err){
+    console.error('failed to load colleges.json', err);
+  }
+}
 
 let currentScore = null;
 const collegeListEl = document.getElementById('collegeList');
@@ -705,7 +610,16 @@ function renderCollegeEstimate(branch){
 
   if(qualifying.length){
     qualifying.forEach((c,i)=>{
-      html += `<div class="college-row"><span class="cname"><b>${TIER_LABEL[i]||('احتمال '+(i+1))}:</b> ${c.name}</span><span class="ccut">${PHASE_LABEL[c.phase]||''} &middot; حد العام الماضي: ${c.cutoff}</span></div>`;
+      const margin = currentScore - c.cutoff;
+      let tier, dot;
+      if(margin >= 10){ tier='احتمال قوي'; dot='dot-strong'; }
+      else if(margin >= 3){ tier='احتمال متوسط'; dot='dot-medium'; }
+      else{ tier='احتمال ضعيف'; dot='dot-weak'; }
+      const confidence = Math.max(50, Math.min(97, Math.round(50 + margin*4)));
+      html += `<div class="college-row">
+        <span class="cname"><span class="conf-dot ${dot}"></span><b>${TIER_LABEL[i]||('احتمال '+(i+1))}:</b> ${c.name} <span class="tier-tag">${tier} &middot; ثقة تقديرية ${confidence}%</span></span>
+        <span class="ccut">${PHASE_LABEL[c.phase]||''} &middot; حد العام الماضي: ${c.cutoff}</span>
+      </div>`;
     });
   }else{
     html += `<div class="no-match">لا توجد كليات في هذه القائمة المختصرة كان حدها الأدنى العام الماضي عند هذا المجموع أو أقل.</div>`;
@@ -731,6 +645,7 @@ document.getElementById('newSearch').addEventListener('click', ()=>{
   qEl.focus();
 });
 
+loadColleges();
 loadData();
 </script>
 </body>
